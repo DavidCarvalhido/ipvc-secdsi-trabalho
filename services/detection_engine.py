@@ -1,38 +1,47 @@
 from models import Incident, RiskAssessment
 from app import db
-from services.risk_engine import evaluate_event
+from services.policy_engine import find_policies
+from services.risk_engine import calculate_risk_score, classify_risk
 
 
 def analyze_event(event):
+    policies = find_policies(event)
 
-    result = evaluate_event(event)
+    if not policies:
+        return
 
-    # só criamos incidente se risco for relevante
-    if result["risk_level"] in ["High", "Critical", "Medium"]:
+    highest_score = 0
+    highest_level = "Low"
 
-        incident = Incident(
-            event_id=event.id,
-            severity=result["risk_level"],
-            risk_level=result["risk_level"]
-        )
+    #score = calculate_risk_score(policy.probability, policy.impact)
+    #incident = Incident(event_id=event.id, severity=classify_risk(score), risk_level=classify_risk(score))
+    incident = Incident(event_id=event.id, severity="Low", risk_level="Low")
 
-        db.session.add(incident)
-        db.session.commit()
+    db.session.add(incident)
+    db.session.flush()
+
+    for policy in policies:
+        score = calculate_risk_score(policy.probability, policy.impact)
+        level = classify_risk(score)
+
+        if score > highest_score:
+            highest_score = score
+            highest_level = level
 
         assessment = RiskAssessment(
             incident_id=incident.id,
-            probability=result["probability"],
-            impact=result["impact"],
-            risk_score=result["score"],
-            risk_level=result["risk_level"],
-            confidentiality=result["cia"]["C"],
-            integrity=result["cia"]["I"],
-            availability=result["cia"]["A"]
+            probability=policy.probability,
+            impact=policy.impact,
+            risk_score=score,
+            risk_level=level,
+            confidentiality=policy.confidentiality,
+            integrity=policy.integrity,
+            availability=policy.availability
         )
 
         db.session.add(assessment)
-        db.session.commit()
 
-        return incident
+    incident.severity = highest_level
+    incident.risk_level = highest_level
 
-    return None
+    db.session.commit()

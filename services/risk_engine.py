@@ -44,6 +44,20 @@ def classify_risk(score):
         return "High"
     else:
         return "Critical"
+    
+
+def evaluate_policy(policy):
+    score = calculate_risk_score(policy.probability, policy.impact)
+
+    return {
+        "score": score,
+        "risk_level": classify_risk(score),
+        "cia": {
+            "C": policy.confidentiality,
+            "I": policy.integrity,
+            "A": policy.availability
+        }
+    }
 
 
 def evaluate_event(event):
