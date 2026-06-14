@@ -3,6 +3,7 @@ from database import db
 print("DB MODELS:", id(db))
 from datetime import datetime
 
+
 class User(db.Model):
     __tablename__ = "users"
 
@@ -20,9 +21,53 @@ class Event(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    asset_id = db.Column(db.Integer, db.ForeignKey("assets.id"))
+
     event_type = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(200))
+
+
+class Asset(db.Model):
+    __tablename__ = "assets"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(100), nullable=False)
+    asset_type = db.Column(db.String(50), nullable=False)
+
+    department = db.Column(db.String(100))
+    criticality = db.Column(db.String(20), nullable=False)
+    owner = db.Column(db.String(100))
+    active = db.Column(db.Boolean, default=True)
+
+
+class Policy(db.Model):
+    __tablename__ = "policies"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    event_type = db.Column(db.String(50), nullable=False)
+    #condition = db.Column(db.String(100), nullable=False)
+    enabled = db.Column(db.Boolean, default=True)
+
+    # condições
+    department = db.Column(db.String(100))
+    allowed_start_hour = db.Column(db.Integer)
+    allowed_end_hour = db.Column(db.Integer)
+    device_whitelist = db.Column(db.Text)
+    # !condições
+
+    probability = db.Column(db.Integer)
+    impact = db.Column(db.Integer)
+    confidentiality = db.Column(db.Integer)
+    integrity = db.Column(db.Integer)
+    availability = db.Column(db.Integer)
+
+    asset_type = db.Column(db.String(50))
+    minimum_criticality = db.Column(db.String(20))
 
 
 class Incident(db.Model):
