@@ -70,6 +70,33 @@ class Policy(db.Model):
     minimum_criticality = db.Column(db.String(20))
 
 
+class Control(db.Model):
+    __tablename__ = "controls"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+
+    policy_id = db.Column(db.Integer, db.ForeignKey("policies.id"))
+
+    control_type = db.Column(db.String(50))
+    active = db.Column(db.Boolean, default=True)
+
+
+class ComplianceResult(db.Model):
+    __tablename__ = "compliance_results"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    event_id = db.Column(db.Integer, db.ForeignKey("events.id"))
+    policy_id = db.Column(db.Integer, db.ForeignKey("policies.id"))
+    control_id = db.Column(db.Integer, db.ForeignKey("controls.id"))
+
+    compliant = db.Column(db.Boolean)
+    reason = db.Column(db.Text)
+
+
 class Incident(db.Model):
     __tablename__ = "incidents"
 
