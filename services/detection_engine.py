@@ -2,13 +2,15 @@ from models import Incident, RiskAssessment
 from app import db
 from services.policy_engine import find_policies
 from services.risk_engine import calculate_risk_score, classify_risk
+from services.compliance_engine import evaluate_control
 
 
 def analyze_event(event):
     policies = find_policies(event)
 
     if not policies:
-        return
+        print("NO POLICY FOUND")
+        return None
 
     highest_score = 0
     highest_level = "Low"
@@ -21,6 +23,8 @@ def analyze_event(event):
     db.session.flush()
 
     for policy in policies:
+        # compliance
+        compliance_results = evaluate_control(event, policy)
         score = calculate_risk_score(policy.probability, policy.impact)
         level = classify_risk(score)
 
@@ -45,3 +49,5 @@ def analyze_event(event):
     incident.risk_level = highest_level
 
     db.session.commit()
+
+    return incident
