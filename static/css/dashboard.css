@@ -1,0 +1,17 @@
+body {
+    background: #f4f7fa;
+}
+
+.card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-weight: 700;
+}
+
+canvas {
+    height: 320px;
+}

@@ -109,6 +109,40 @@ class Incident(db.Model):
     probability = db.Column(db.Integer)
     impact = db.Column(db.Integer)
 
+    status = db.Column(db.String(30),default="Open")
+    assigned_to = db.Column(db.String(100))
+    resolution = db.Column(db.Text)
+    closed_at = db.Column(db.DateTime)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class IncidentAction(db.Model):
+    __tablename__ = "incident_actions"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    incident_id = db.Column(db.Integer,db.ForeignKey("incidents.id"))
+
+    action = db.Column(db.String(100))
+    notes = db.Column(db.Text)
+    performed_by = db.Column(db.String(100))
+
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Evidence(db.Model):
+    __tablename__ = "evidences"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    incident_id = db.Column(db.Integer, db.ForeignKey("incidents.id"))
+
+    evidence_type = db.Column(db.String(50))
+    title = db.Column(db.String(100))
+    content = db.Column(db.Text)
+
+    created_by = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -129,3 +163,18 @@ class RiskAssessment(db.Model):
     availability = db.Column(db.Integer)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AuditLog(db.Model):
+    __tablename__ = "audit_logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    entity = db.Column(db.String(50))
+    entity_id = db.Column(db.Integer)
+
+    action = db.Column(db.String(50))
+    actor = db.Column(db.String(100))
+    details = db.Column(db.Text)
+
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)

@@ -12,7 +12,7 @@ def create_app():
 
     print(id(db))
     from models import User, Event, Asset, \
-                    Policy, Control, ComplianceResult, Incident
+                    Policy, Control, Incident
     print(id(db))
 
     with app.app_context():
@@ -27,6 +27,9 @@ def create_app():
     from routes.compliance_routes import compliance_bp
     from routes.incident_routes import incident_bp
     from routes.risk_routes import risk_bp
+    from routes.evidence_routes import evidence_bp
+    from routes.audit_routes import audit_bp
+    from routes.dashboard_routes import dashboard_bp
 
     app.register_blueprint(user_bp)
     app.register_blueprint(event_bp)
@@ -36,6 +39,9 @@ def create_app():
     app.register_blueprint(compliance_bp)
     app.register_blueprint(incident_bp)
     app.register_blueprint(risk_bp)
+    app.register_blueprint(evidence_bp)
+    app.register_blueprint(audit_bp)
+    app.register_blueprint(dashboard_bp)
 
     return app
 
