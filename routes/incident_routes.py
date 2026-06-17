@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app import db
-from models import Incident, Event
+from datetime import datetime
+from models import Incident, IncidentAction, Event
+from services.audit_service import audit
 
 incident_bp = Blueprint('incident_bp', __name__)
 
@@ -18,12 +20,13 @@ def get_incidents():
         result.append({
             "id": i.id,
             "event_id": i.event_id,
-            "event_type": event.event_type if event else None,
+            #"event_type": event.event_type if event else None,
             "severity": i.severity,
             "risk_level": i.risk_level,
-            "probability": i.probability,
-            "impact": i.impact,
-            "created_at": i.created_at.isoformat() if i.created_at else None
+            "status": i.status,
+            "assigned_to": i.assigned_to,
+            "created_at": i.created_at.isoformat() if i.created_at else None,
+            "closed_at": i.closed_at.isoformat() if i.closed_at else None
         })
 
     return jsonify(result), 200
@@ -81,6 +84,73 @@ def delete_incident(incident_id):
     return jsonify({"message": "Incident deleted"}), 200
 
 
+@incident_bp.route("/incidents/<int:id>", methods=['PATCH'])
+def update_incident_status(id):
+    incident = Incident.query.get_or_404(id)
+    data = request.json
+
+    audit(
+        entity="incident",
+        entity_id=incident.id,
+        action="update",
+        actor=data.get("assigned_to", "system"),
+        details=str(data)
+    )
+
+    if "status" in data:
+        incident.status = (data["status"])
+        if (data["status"] == "Closed"):
+            incident.closed_at = (datetime.utcnow())
+
+    if ("assigned_to" in data):
+        incident.assigned_to = (data["assigned_to"])
+
+    if ("resolution" in data):
+        incident.resolution = (data["resolution"])
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "incident updated"
+    }), 200
+
+
+@incident_bp.route("/incidents/<int:id>/actions", methods=['POST'])
+def add_action(id):
+    incident = Incident.query.get_or_404(id)
+    data = request.json
+
+    action = IncidentAction(
+        incident_id=id,
+        action=data["action"],
+        notes=data.get("notes"),
+        performed_by=data.get("performed_by")
+    )
+
+    db.session.add(action)
+    db.session.commit()
+
+    return jsonify({
+        "message": "action added"
+    })
+
+
+@incident_bp.route("/incidents/<int:id>/actions", methods=['GET'])
+def get_actions(id):
+    actions = IncidentAction.query.filter_by(incident_id=id).all()
+
+    return jsonify([
+        {
+            "action": a.action,
+            "notes": a.notes,
+            "performed_by": a.performed_by,
+            "timestamp": a.timestamp
+        }
+
+        for a in actions
+    ])
+
+
 # MANUAL create incident (para testes)
 @incident_bp.route("/incidents", methods=['POST'])
 def create_incident():
@@ -90,8 +160,8 @@ def create_incident():
         event_id=data["event_id"],
         severity=data.get("severity", "medium"),
         risk_level=data.get("risk_level", "medium"),
-        probability=data.get("probability", "medium"),
-        impact=data.get("impact", "medium")
+        # probability=data.get("probability", "medium"),
+        # impact=data.get("impact", "medium")
     )
 
     db.session.add(incident)
