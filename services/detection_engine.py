@@ -3,6 +3,8 @@ from app import db
 from services.policy_engine import find_policies
 from services.risk_engine import calculate_risk_score, classify_risk
 from services.compliance_engine import evaluate_control
+from services.evidence_engine import create_evidence
+from services.audit_engine import create_audit_log
 
 
 def analyze_event(event):
@@ -28,6 +30,8 @@ def analyze_event(event):
         score = calculate_risk_score(policy.probability, policy.impact)
         level = classify_risk(score)
 
+        print(f"Compliance created: {len(compliance_results)}")
+
         if score > highest_score:
             highest_score = score
             highest_level = level
@@ -42,6 +46,19 @@ def analyze_event(event):
             integrity=policy.integrity,
             availability=policy.availability
         )
+
+        create_evidence(incident, event, policy)
+        
+        create_audit_log(
+            entity="incident",
+            entity_id=incident.id,
+            action="CREATED",
+            details=f"""
+                    Event:{event.event_type}
+                    Policy:{policy.name}
+                    Risk:{level}
+                    """
+            )
 
         db.session.add(assessment)
 

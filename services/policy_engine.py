@@ -39,7 +39,14 @@ def matches_policy(event, policy):
     }
 
     if (policy.minimum_criticality):
-        if (levels[asset.criticality] < levels[policy.minimum_criticality]):
+        # if (levels[asset.criticality] < levels[policy.minimum_criticality]):
+        #     return False
+        asset_level = (levels.get(asset.criticality.lower(), 0))
+        policy_level = (levels.get(policy.minimum_criticality.lower(), 0))
+
+        if asset_level < policy_level:
+            print("FAIL → criticality")
+
             return False
 
     return True

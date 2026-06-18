@@ -3,6 +3,8 @@ from flask import Flask
 from config import Config
 from database import db
 
+from models import *
+
 
 def create_app():
     app = Flask(__name__)
@@ -11,8 +13,8 @@ def create_app():
     db.init_app(app)
 
     print(id(db))
-    from models import User, Event, Asset, \
-                    Policy, Control, Incident
+    # from models import User, Event, Asset, \
+                    # Policy, Control, Incident
     print(id(db))
 
     with app.app_context():
