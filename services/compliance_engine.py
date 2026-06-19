@@ -1,5 +1,5 @@
 from models import Control, ComplianceResult
-from app import db
+from database import db
 
 
 def evaluate_control(event, policy):
@@ -7,12 +7,15 @@ def evaluate_control(event, policy):
     results = []
 
     for control in controls:
+        passed = (event.event_type == policy.event_type)
+        
         result = ComplianceResult(
             event_id=event.id,
             policy_id=policy.id,
             control_id=control.id,
-            compliant=False,
-            reason="Policy violation"
+            compliant=passed,
+            reason="Control validated"
+            #reason="OK" if compliant else "Policy violation"
         )
 
         db.session.add(result)

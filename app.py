@@ -32,6 +32,7 @@ def create_app():
     from routes.evidence_routes import evidence_bp
     from routes.audit_routes import audit_bp
     from routes.dashboard_routes import dashboard_bp
+    from routes.report_routes import report_bp
 
     app.register_blueprint(user_bp)
     app.register_blueprint(event_bp)
@@ -44,6 +45,7 @@ def create_app():
     app.register_blueprint(evidence_bp)
     app.register_blueprint(audit_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(report_bp)
 
     return app
 

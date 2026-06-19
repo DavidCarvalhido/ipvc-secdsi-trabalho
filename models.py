@@ -1,4 +1,3 @@
-#from app import db
 from database import db
 print("DB MODELS:", id(db))
 from datetime import datetime

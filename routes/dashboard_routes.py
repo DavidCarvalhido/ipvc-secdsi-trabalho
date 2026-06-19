@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, render_template
-from app import db
+from database import db
 from sqlalchemy import func
 from models import Event, Incident, RiskAssessment, ComplianceResult, Asset
 
@@ -183,3 +183,21 @@ def recent_incidents():
 
         for i in incidents
     ])
+
+
+@dashboard_bp.route("/dashboard/cia", methods=["GET"])
+def cia():
+    row = (
+        db.session.query(
+            func.avg(RiskAssessment.confidentiality),
+            func.avg(RiskAssessment.integrity),
+            func.avg(RiskAssessment.availability)
+        )
+        .first()
+    )
+
+    return jsonify({
+        "confidentiality": round(row[0] or 0, 2),
+        "integrity": round(row[1] or 0, 2),
+        "availability": round(row[2] or 0, 2)
+    })

@@ -11,8 +11,8 @@ sys.path.insert(0, BASE_DIR)
 
 from app import create_app
 from database import db
-
-from models import User, Asset, Event
+from models import User, Asset, Event, Incident, \
+        RiskAssessment, Evidence, ComplianceResult, AuditLog
 from services.detection_engine import analyze_event
 
 
@@ -74,6 +74,11 @@ with app.app_context():
     Asset.query.delete()
     Event.query.delete()
     User.query.delete()
+    Incident.query.delete()
+    RiskAssessment.query.delete()
+    Evidence.query.delete()
+    ComplianceResult.query.delete()
+    AuditLog.query.delete()
 
     db.session.commit()
 
