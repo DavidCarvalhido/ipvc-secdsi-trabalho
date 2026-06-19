@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app import db
+from database import db
 from datetime import datetime
 from models import Incident, IncidentAction, Event
 from services.audit_service import audit

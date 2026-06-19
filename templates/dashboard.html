@@ -9,6 +9,9 @@
 <body>
     <div class="container">
         <h1 class="mt-4">Security Governance Dashboard</h1>
+        <div class="text-end mt-4">
+            <a class="btn btn-dark" href="/reports/export/pdf">Exportar PDF Executivo</a>
+        </div>
         <!-- KPIS -->
         <div class="row mt-4">
             <div class="col">
@@ -43,11 +46,27 @@
                     </div>
                 </div>
             </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Compliance</h6>
+                        <h2 id="compliance"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Evidence</h6>
+                        <h2 id="evidence"></h2>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- charts -->
         <div class="row mt-5">
             <div class="col-md-6">
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-body">
                         <h5>Risk Distribution</h5>
                         <canvas id="riskChart"></canvas>
@@ -63,16 +82,6 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-5">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Top Assets</h5>
-                        <ul id="topAssets"></ul>
-                    </div>
-                </div>
-            </div>
-        </div>
         <!---->
         <div class="row mt-5">
             <div class="col-md-4">
@@ -83,7 +92,18 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Incident Timeline</h5>
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
                         <h5>Critical Active</h5>
@@ -91,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
                         <h5>MTTR</h5>
@@ -120,6 +140,47 @@
                 </div>
             </div>
         </div>
+        <div class="row mt-5">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Top Assets</h5>
+                        <ul id="topAssets"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Confidentiality</h5>
+                        <h2 id="ciaC"></h2>
+                    </div>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>Integrity</h5>
+                        <h2 id="ciaI"></h2>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Availability</h5>
+                        <h2 id="ciaA"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5>CIA Impact Profile</h5>
+                        <canvas id="ciaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/static/js/dashboard.js"></script>

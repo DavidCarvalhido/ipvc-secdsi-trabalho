@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app import db
+from database import db
 from models import Event
 from services.detection_engine import analyze_event
 

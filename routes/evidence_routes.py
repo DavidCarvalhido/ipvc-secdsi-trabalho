@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app import db
+from database import db
 from models import Evidence, Incident
 
 
@@ -42,5 +42,23 @@ def get_evidence(id):
             "created_at": e.created_at.isoformat()
         }
 
+        for e in evidence
+    ])
+
+
+# GET all evidences
+@evidence_bp.route("/evidence", methods=['GET'])
+def all_evidence():
+    evidence = Evidence.query.all()
+
+    return jsonify([
+        {
+            "id": e.id,
+            "type": e.evidence_type,
+            "title": e.title,
+            "content": e.content,
+            "created_by": e.created_by,
+            "created_at": e.created_at.isoformat()
+        }
         for e in evidence
     ])

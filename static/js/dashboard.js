@@ -76,6 +76,25 @@ async function loadIncidentStatus() {
 }
 
 
+async function loadTimeline() {
+    const r = await fetch("/dashboard/incidents/timeline")
+    const d = await r.json()
+
+    new Chart(
+        document.getElementById("timelineChart"),
+        {
+            type: "line",
+            data: {
+                labels: d.map(x => x.date),
+                datasets: [{
+                    data: d.map(x => x.incidents)
+                }]
+            }
+        }
+    )
+}
+
+
 async function loadCritical() {
     const r = await fetch("/dashboard/incidents/critical");
     const data = await r.json();
@@ -110,12 +129,58 @@ async function loadRecent() {
     );
 }
 
-loadSummary();
-loadRisk();
-loadCompliance();
-loadAssets();
 
-loadIncidentStatus();
-loadCritical();
-loadMTTR();
-loadRecent();
+async function loadCIA() {
+    const r = await fetch("/dashboard/cia")
+    const d = await r.json()
+
+    document.getElementById("ciaC").innerHTML =d.confidentiality
+    document.getElementById("ciaI").innerHTML =d.integrity
+    document.getElementById("ciaA").innerHTML =d.availability
+
+    new Chart(
+        document.getElementById("ciaChart"),
+        {
+            type: "radar",
+            data: {
+                labels: [
+                    "Confidentiality",
+                    "Integrity",
+                    "Availability"
+                ],
+                datasets: [{
+                    data: [
+                        d.confidentiality,
+                        d.integrity,
+                        d.availability
+                    ]
+                }]
+            }
+        }
+    )
+}
+
+
+async function loadExecutive() {
+    const r = await fetch("/reports/executive")
+    const d = await r.json()
+
+    document.getElementById("incidents").innerHTML = d.incidents
+    document.getElementById("risk").innerHTML = d.risk
+    document.getElementById("compliance").innerHTML = d.compliance
+    document.getElementById("evidence").innerHTML = d.evidence
+}
+
+
+loadSummary()
+loadRisk()
+loadCompliance()
+loadAssets()
+
+loadIncidentStatus()
+loadTimeline()
+loadCritical()
+loadMTTR()
+loadRecent()
+loadCIA()
+loadExecutive()

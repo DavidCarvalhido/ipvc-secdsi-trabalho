@@ -1,5 +1,5 @@
 from models import Incident, RiskAssessment
-from app import db
+from database import db
 from services.policy_engine import find_policies
 from services.risk_engine import calculate_risk_score, classify_risk
 from services.compliance_engine import evaluate_control
