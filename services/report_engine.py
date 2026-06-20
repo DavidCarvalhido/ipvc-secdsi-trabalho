@@ -67,3 +67,19 @@ def get_full_report():
         "compliance": get_compliance_report(),
         "risk": get_risk_report()
     }
+
+
+def build_cia_table():
+    rows = (RiskAssessment.query.all())
+    data = []
+
+    for r in rows:
+        data.append([
+            f"INC-{r.incident_id}",
+            r.confidentiality,
+            r.integrity,
+            r.availability,
+            r.risk_level
+        ])
+
+    return data

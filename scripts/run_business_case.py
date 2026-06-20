@@ -51,6 +51,13 @@ CASES = {
         "user":"joao",
         "asset":"FINANCE-PC-01",
         "event":"ACCESS_DENIED"
+    },
+
+    6: {
+        "name": "USB prohibited",
+        "user": "rui",
+        "asset": "HR-LAPTOP",
+        "event": "USB_CONNECTED"
     }
 }
 

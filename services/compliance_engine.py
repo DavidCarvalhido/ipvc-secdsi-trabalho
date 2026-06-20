@@ -7,15 +7,15 @@ def evaluate_control(event, policy):
     results = []
 
     for control in controls:
-        passed = (event.event_type == policy.event_type)
+        passed = (event.event_type != policy.event_type)
         
         result = ComplianceResult(
             event_id=event.id,
             policy_id=policy.id,
             control_id=control.id,
             compliant=passed,
-            reason="Control validated"
-            #reason="OK" if compliant else "Policy violation"
+            #reason="Control validated"
+            reason="OK" if passed else "Policy violation"
         )
 
         db.session.add(result)

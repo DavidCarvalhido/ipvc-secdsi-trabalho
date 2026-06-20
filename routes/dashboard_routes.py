@@ -201,3 +201,42 @@ def cia():
         "integrity": round(row[1] or 0, 2),
         "availability": round(row[2] or 0, 2)
     })
+
+
+@dashboard_bp.route("/dashboard/cases", methods=['GET'])
+def list_cases():
+    rows = (Incident.query.order_by(Incident.created_at.desc()).all())
+
+    return jsonify([
+        {
+            "id": i.id,
+            "label": (
+                f"INC-{i.id} | "
+                f"{i.risk_level} | "
+                f"{i.status}"
+            )
+        }
+
+        for i in rows
+    ])
+
+
+@dashboard_bp.route("/dashboard/cia/<int:incident_id>", methods=['GET'])
+def cia_case(incident_id):
+    incident = (Incident.query.get_or_404(incident_id))
+    risk = (RiskAssessment.query.filter_by(incident_id=incident.id).first())
+
+    if not risk:
+        return jsonify({
+            "confidentiality":0,
+            "integrity":0,
+            "availability":0
+        })
+
+    return jsonify({
+        "incident":incident.id,
+        "confidentiality":risk.confidentiality,
+        "integrity":risk.integrity,
+        "availability":risk.availability,
+        "risk":risk.risk_level
+    })

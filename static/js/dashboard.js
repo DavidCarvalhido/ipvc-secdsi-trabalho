@@ -134,9 +134,9 @@ async function loadCIA() {
     const r = await fetch("/dashboard/cia")
     const d = await r.json()
 
-    document.getElementById("ciaC").innerHTML =d.confidentiality
-    document.getElementById("ciaI").innerHTML =d.integrity
-    document.getElementById("ciaA").innerHTML =d.availability
+    document.getElementById("ciaC").innerHTML = d.confidentiality
+    document.getElementById("ciaI").innerHTML = d.integrity
+    document.getElementById("ciaA").innerHTML = d.availability
 
     new Chart(
         document.getElementById("ciaChart"),
@@ -158,6 +158,40 @@ async function loadCIA() {
             }
         }
     )
+}
+
+
+async function loadCases() {
+    const r = await fetch("/dashboard/cases")
+    const data = await r.json()
+    const select = document.getElementById("caseSelector")
+
+    data.forEach(
+        c => {
+            select.innerHTML += `<option value="${c.id}">${c.label}</option>`
+
+        }
+    )
+
+    if (data.length) {
+        loadCaseCIA(data[0].id)
+    }
+
+    select.addEventListener(
+        "change", e => loadCaseCIA(e.target.value)
+    )
+}
+
+
+async function loadCaseCIA(id) {
+    const r =await fetch(`/dashboard/cia/${id}`)
+    const d =await r.json()
+
+    document.getElementById("ciaC_ind").innerHTML =d.confidentiality
+    document.getElementById("ciaI_ind").innerHTML =d.integrity
+    document.getElementById("ciaA_ind").innerHTML =d.availability
+    document.getElementById("ciaRisk_ind").innerHTML =d.risk
+
 }
 
 
@@ -183,4 +217,6 @@ loadCritical()
 loadMTTR()
 loadRecent()
 loadCIA()
+loadCases()
+//loadCaseCIA()
 loadExecutive()
